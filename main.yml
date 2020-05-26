@@ -1,0 +1,9 @@
+---
+- hosts: student
+  roles:
+    - role: apache
+    - role: gitlab
+      vars:
+        gitlab_address: localhost
+        gitlab_port: 8888
+        gitlab_https: "false"

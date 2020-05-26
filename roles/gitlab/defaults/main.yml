@@ -1,0 +1,4 @@
+gitlab_address: localhost
+gitlab_port: 8888
+gitlab_https: "false"
+gitlab_external: http://gitlab.student.local

@@ -1,0 +1,6 @@
+---
+apache_dependency: apache2
+apache_modules:
+  - proxy
+  - proxy_http
+apache_sites_error_log: /var/log/apache2/

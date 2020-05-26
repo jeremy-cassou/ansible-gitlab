@@ -1,0 +1,6 @@
+gitlab_dependencies:
+  - curl
+  - openssh-server
+  - ca-certificates
+  - postfix
+gitlab_repository: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh

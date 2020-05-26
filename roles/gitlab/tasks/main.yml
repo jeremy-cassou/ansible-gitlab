@@ -1,0 +1,48 @@
+- include_vars: vars/secure.yml
+- name: Install Dependencies
+  become: true
+  apt:
+    pkg: "{{ gitlab_dependencies }}"
+- name: Download GitLab Repository
+  become: true
+  get_url:
+    url: "{{ gitlab_repository }}"
+    dest: /tmp
+    mode: '777'
+- name: Install GitLab Repository
+  become: true
+  shell: /tmp/script.deb.sh
+- name: Install GitLab
+  become: true
+  apt:
+    update_cache: yes
+    name: gitlab-ce
+- name: Set Gitlab configuration
+  become: true
+  lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - regexp: '^external_url'
+      line: "external_url '{{ gitlab_external }}'"
+    - regexp: "^(\\# )?nginx\\['listen_addresses'\\].*$"
+      line: "nginx['listen_addresses'] = ['{{ gitlab_address }}']"
+    - regexp: "^(\\# )?nginx\\['listen_port'\\].*$"
+      line: "nginx['listen_port'] = {{ gitlab_port }}"
+    - regexp: "^(\\# )?nginx\\['listen_https'\\].*$"
+      line: "nginx['listen_https'] = {{ gitlab_https }}"
+- name: Apply GitLab Configuration
+  become: true
+  command: gitlab-ctl reconfigure
+- name: Create root user
+  become: true
+  command: |
+    gitlab-rails runner "
+      user = User.first;
+      user.username = '{{ gitlab_root_username }}';
+      user.password = '{{ gitlab_root_password }}';
+      user.password_confirmation = '{{ gitlab_root_password }}';
+      user.password_automatically_set = false;
+      user.save!
+    "
