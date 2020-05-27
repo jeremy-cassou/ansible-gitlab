@@ -37,12 +37,11 @@
   command: gitlab-ctl reconfigure
 - name: Create root user
   become: true
-  command: |
+  command: >
     gitlab-rails runner "
       user = User.first;
       user.username = '{{ gitlab_root_username }}';
       user.password = '{{ gitlab_root_password }}';
       user.password_confirmation = '{{ gitlab_root_password }}';
       user.password_automatically_set = false;
-      user.save!
-    "
+      user.save!"
